@@ -1,0 +1,16 @@
+.board {
+    display: grid;
+    width: 400px;
+    height: 400px;
+    gap: 10px;
+    background-color: black;
+    grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+}
+
+.square{
+    background-color: white;
+    font-size: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
