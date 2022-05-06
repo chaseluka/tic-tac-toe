@@ -50,7 +50,6 @@ displayBoard();
 const gameOver = () => {
     const winner = () => {
         let playedSquares = gameBoard.game;
-        console.log(playedSquares);
         if (playedSquares[0] === playedSquares[1] && playedSquares[0] === playedSquares[2]){
             console.log('You won');
         }
@@ -74,6 +73,19 @@ const gameOver = () => {
         }
         else if (playedSquares[2] === playedSquares[4] && playedSquares[2] === playedSquares[6]){
             console.log('You won');
+        }
+        playedSquares = playedSquares.filter(square => {
+            if (square === 'O'){
+                return square != 'O';
+            }
+            else if (square === 'X'){
+                return square != 'X';
+            }
+            else return square
+            
+        })
+        if (playedSquares.length === 0){
+            console.log('Its a draw');
         }
     }
     return {winner}
