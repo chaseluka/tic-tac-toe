@@ -19,7 +19,7 @@ const Player = (name, marker) => {
 
 let win = false;
 
-const playOnBoard = () => {
+const ticTacToe = () => {
     const board = document.querySelectorAll('.square');
     
     const playerOne = Player(`${document.getElementById('player-one').value}`, 'X');
@@ -38,88 +38,53 @@ const playOnBoard = () => {
     
     const gameOver = () => {
         let playedSquares = gameBoard.game;
-        let marker = '';
+        
         const winner = () => {
-            if (playedSquares[0] === playedSquares[1] && playedSquares[0] === playedSquares[2]){
-                marker = playedSquares[0]; 
-                if (marker === playerOne.getMarker()){
-                    console.log(`${playerOne.playerName()} is victorious`);
-                }
-                else if (marker === playerTwo.getMarker()){
-                    console.log(`${playerTwo.playerName()} is victorious`);
-                }
-                win = true;
+            
+            const rowWin = () =>{
+                row1 = [playedSquares[0], playedSquares[1], playedSquares[2]];
+                row2 = [playedSquares[3], playedSquares[4], playedSquares[5]];
+                row3 = [playedSquares[6], playedSquares[7], playedSquares[8]];
+                if (row1.every(marker => marker =='X') || row1.every(marker => marker == 'O') ||
+                    row2.every(marker => marker =='X') || row2.every(marker => marker == 'O') ||
+                    row3.every(marker => marker =='X') || row3.every(marker => marker == 'O')){
+                        return true;
+                    }
+                else return false
             }
-            else if (playedSquares[3] === playedSquares[4] && playedSquares[3] === playedSquares[5]){
-                marker = playedSquares[3]; 
-                if (marker === playerOne.getMarker()){
-                    console.log(`${playerOne.playerName()} is victorious`);
-                }
-                else if (marker === playerTwo.getMarker()){
-                    console.log(`${playerTwo.playerName()} is victorious`);
-                }
-                win = true;
+            
+            const columnWin = () => {
+                column1 = [playedSquares[0], playedSquares[3], playedSquares[6]];
+                column2 = [playedSquares[1], playedSquares[4], playedSquares[7]];
+                column3 = [playedSquares[2], playedSquares[5], playedSquares[8]];
+                if (column1.every(marker => marker =='X') || column1.every(marker => marker == 'O') ||
+                    column2.every(marker => marker =='X') || column2.every(marker => marker == 'O') ||
+                    column3.every(marker => marker =='X') || column3.every(marker => marker == 'O')){
+                        console.log(marker);
+                        return true;
+                    }
+                else return false
             }
-            else if (playedSquares[6] === playedSquares[7] && playedSquares[6] === playedSquares[8]){
-                marker = playedSquares[6]; 
-                if (marker === playerOne.getMarker()){
-                    console.log(`${playerOne.playerName()} is victorious`);
-                }
-                else if (marker === playerTwo.getMarker()){
-                    console.log(`${playerTwo.playerName()} is victorious`);
-                }
-                win = true;
+
+            const diagonalWin = () => {
+                diagonal1 = [playedSquares[0], playedSquares[4], playedSquares[8]];
+                diagonal2 = [playedSquares[2], playedSquares[4], playedSquares[6]];
+                if (diagonal1.every(marker => marker =='X') || diagonal1.every(marker => marker == 'O') ||
+                    diagonal2.every(marker => marker =='X') || diagonal2.every(marker => marker == 'O')){
+                        return true;
+                    }
+                else return false
             }
-            else if (playedSquares[0] === playedSquares[3] && playedSquares[0] === playedSquares[6]){
-                marker = playedSquares[0]; 
-                if (marker === playerOne.getMarker()){
-                    console.log(`${playerOne.playerName()} is victorious`);
+            const checkWin = () => {
+                
+                if (rowWin() === true || columnWin() === true || diagonalWin() === true){
+                    win = true;
+                    console.log('You won');
+                    return true
                 }
-                else if (marker === playerTwo.getMarker()){
-                    console.log(`${playerTwo.playerName()} is victorious`);
-                }
-                win = true;
+                else return false
             }
-            else if (playedSquares[1] === playedSquares[4] && playedSquares[1] === playedSquares[7]){
-                marker = playedSquares[1]; 
-                if (marker === playerOne.getMarker()){
-                    console.log(`${playerOne.playerName()} is victorious`);
-                }
-                else if (marker === playerTwo.getMarker()){
-                    console.log(`${playerTwo.playerName()} is victorious`);
-                }
-                win = true;
-            }
-            else if (playedSquares[2] === playedSquares[5] && playedSquares[5] === playedSquares[8]){
-                marker = playedSquares[2]; 
-                if (marker === playerOne.getMarker()){
-                    console.log(`${playerOne.playerName()} is victorious`);
-                }
-                else if (marker === playerTwo.getMarker()){
-                    console.log(`${playerTwo.playerName()} is victorious`);
-                }
-                win = true;
-            }
-            else if (playedSquares[0] === playedSquares[4] && playedSquares[0] === playedSquares[8]){
-                marker = playedSquares[0]; 
-                if (marker === playerOne.getMarker()){
-                    console.log(`${playerOne.playerName()} is victorious`);
-                }
-                else if (marker === playerTwo.getMarker()){
-                    console.log(`${playerTwo.playerName()} is victorious`);
-                }
-                win = true;
-            }
-            else if (playedSquares[2] === playedSquares[4] && playedSquares[2] === playedSquares[6]){
-                marker = playedSquares[2]; 
-                if (marker === playerOne.getMarker()){
-                    console.log(`${playerOne.playerName()} is victorious`);
-                }
-                else if (marker === playerTwo.getMarker()){
-                    console.log(`${playerTwo.playerName()} is victorious`);
-                }
-                win = true;
-            }
+            return{checkWin};
         }
     
         
@@ -137,7 +102,8 @@ const playOnBoard = () => {
             if (playedSquares.length === 0 && win === false){
                 console.log('Its a draw');
             }
-            console.log(playedSquares);
+            return {playedSquares}
+            
         }
         
         return {winner, draw, win}
@@ -151,16 +117,28 @@ const playOnBoard = () => {
             if (win === false){
                 if (moveCount % 2 === 0){
                     gameBoard.game.splice(section, 1, playerOne.getMarker());
+                    if (outcome.winner().checkWin() === true){
+                        console.log(`${playerOne.playerName()} is victorious`);
+                    }
+                    
                 }
                 else if (moveCount % 2 !== 0){
                     gameBoard.game.splice(section, 1, playerTwo.getMarker());
+                    if (outcome.winner().checkWin() === true){
+                        console.log(`${playerTwo.playerName()} is victorious`);
+                    }
                 }
                 moveCount++
+                
                 board[section].textContent = gameBoard.game[section];
+                
+                
+                outcome.draw();
+                
 
                 
-                outcome.winner();
-                outcome.draw();
+                
+                
             }
             this.removeEventListener('click', playMove, false);
         }, false);
@@ -170,7 +148,7 @@ const playOnBoard = () => {
 
 const playGame = document.getElementById('play-game');
 playGame.addEventListener('click', () => {
-    playOnBoard();
+    ticTacToe();
 })
 
 const reset = document.getElementById('reset');
@@ -181,8 +159,37 @@ reset.addEventListener('click', () => {
     });
     gameBoard.game = [1, 2, 3, 4, 5, 6, 7, 8, 9];
     win = false;
-    playOnBoard();
+    ticTacToe();
 })
 
 
+/*
+const computer = () => {
+        const check = gameOver();
 
+        let remainingSquares = Math.floor(Math.random() * check.draw().playedSquares.length);
+        
+        gameBoard.game.splice(remainingSquares, 1, playerTwo.getMarker());
+    
+        board[remainingSquares].textContent = gameBoard.game[remainingSquares];
+        console.log(gameBoard.game);
+        console.log(board[remainingSquares].textContent);
+
+        check.draw();
+        check.winner();
+        moveCount++;
+    
+    }    
+*/
+
+
+/* 
+marker = playedSquares[2]; 
+                if (marker === playerOne.getMarker()){
+                    console.log(`${playerOne.playerName()} is victorious`);
+                }
+                else if (marker === playerTwo.getMarker()){
+                    console.log(`${playerTwo.playerName()} is victorious`);
+                }
+                win = true;
+*/
