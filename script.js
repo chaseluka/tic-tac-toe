@@ -6,34 +6,27 @@ const gameBoard = (() => {
     }
 })();
 
-const Player = (name, marker) => {
-    const playerName = () => {
-        return name;
-    }
-    const getMarker = () => {
-        return marker
-    }
-
-    return {playerName, getMarker}
-}
-
 let win = false;
-    
-const playerOne = Player(`${document.getElementById('player-one').value}`, 'X');
-const playerTwo = Player(`${document.getElementById('player-two').value}`, 'O');
-
-const players = document.querySelector('.players');
-const playerOneDisplay = document.createElement('div');
-const playerTwoDisplay = document.createElement('div');
-playerOneDisplay.textContent = `${playerOne.playerName()} is ${playerOne.getMarker()}`;
-playerTwoDisplay.textContent = `${playerTwo.playerName()} is ${playerTwo.getMarker()}`;
-
-players.appendChild(playerOneDisplay);
-players.appendChild(playerTwoDisplay);
 let moveCount = 0;
 
 const ticTacToe = (() => {
     const board = document.querySelectorAll('.square');
+
+    const Player = (name, marker) => {
+        const playerName = () => {return name;}
+        const getMarker = () => {return marker}
+        return {playerName, getMarker}
+    }
+    
+    const createPlayers = () => {
+        const playerOne = Player(`${document.getElementById('player-one').value}`, 'X');
+        const playerTwo = Player(`${document.getElementById('player-two').value}`, 'O');
+        const playerOneDisplay = document.querySelector('.players div:first-child');
+        const playerTwoDisplay = document.querySelector('.players div:last-child');
+        playerOneDisplay.textContent = `${playerOne.playerName()} is ${playerOne.getMarker()}`;
+        playerTwoDisplay.textContent = `${playerTwo.playerName()} is ${playerTwo.getMarker()}`;
+        return {playerOne, playerTwo}
+    }
     
     const gameOver = () => {
         
@@ -95,25 +88,21 @@ const ticTacToe = (() => {
         section = section.getAttribute('data-num');
         if (win === false){
             if (moveCount % 2 === 0){
-                gameBoard.game.splice(section, 1, playerOne.getMarker());
+                gameBoard.game.splice(section, 1, createPlayers().playerOne.getMarker());
                 if (gameOver().winner.checkWin === true){
-                    console.log(`${playerOne.playerName()} is victorious`);
+                    console.log(`${createPlayers().playerOne.playerName()} is victorious`);
                 }
-                
             }
             else if (moveCount % 2 !== 0){
-                gameBoard.game.splice(section, 1, playerTwo.getMarker());
+                gameBoard.game.splice(section, 1, createPlayers().playerTwo.getMarker());
                 if (gameOver().winner.checkWin === true){
-                    console.log(`${playerTwo.playerName()} is victorious`);
+                    console.log(`${createPlayers().playerTwo.playerName()} is victorious`);
                 }
             }
             moveCount++
             board[section].textContent = gameBoard.game[section];
-            console.log(moveCount);
-        
         }
         e.target.removeEventListener('click', playMove, false);
-        return {e}
     }
 
     const playRound = () => {
@@ -121,12 +110,13 @@ const ticTacToe = (() => {
             square.addEventListener('click', playMove, false);
         });
     }
-    return{playRound}
+    return{playRound, createPlayers}
 })();
 
 const playGame = document.getElementById('play-game');
 playGame.addEventListener('click', () => {
     ticTacToe.playRound();
+    ticTacToe.createPlayers();
     moveCount = 0;
 })
 
