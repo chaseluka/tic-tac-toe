@@ -39,7 +39,7 @@ const ticTacToe = () => {
     const gameOver = () => {
         let playedSquares = gameBoard.game;
         
-        const winner = () => {
+        const winner = (() => {
             
             const rowWin = () =>{
                 row1 = [playedSquares[0], playedSquares[1], playedSquares[2]];
@@ -60,7 +60,6 @@ const ticTacToe = () => {
                 if (column1.every(marker => marker =='X') || column1.every(marker => marker == 'O') ||
                     column2.every(marker => marker =='X') || column2.every(marker => marker == 'O') ||
                     column3.every(marker => marker =='X') || column3.every(marker => marker == 'O')){
-                        console.log(marker);
                         return true;
                     }
                 else return false
@@ -76,32 +75,36 @@ const ticTacToe = () => {
                 else return false
             }
             const checkWin = () => {
-                
                 if (rowWin() === true || columnWin() === true || diagonalWin() === true){
                     win = true;
-                    console.log('You won');
                     return true
                 }
                 else return false
             }
             return{checkWin};
-        }
+        })();
     
         
         const draw = () => {
-            playedSquares = playedSquares.filter(square => {
-                if (square === 'O'){
-                    return square != 'O';
+            playedSquares.every(square => {
+                if (square === 'O' || square === 'X'){
+                    console.log('Its a draw');
                 }
-                else if (square === 'X'){
-                    return square != 'X';
+            })
+            console.log(playedSquares);
+            return {playedSquares}
+            /*
+            playedSquares = playedSquares.filter(square => {
+                if (square === 'O' || square === 'X'){
+                    return square != 'O' + 'X';
                 }
                 else return square
-                
             })
             if (playedSquares.length === 0 && win === false){
                 console.log('Its a draw');
             }
+            */
+            console.log(playedSquares);
             return {playedSquares}
             
         }
@@ -112,33 +115,24 @@ const ticTacToe = () => {
     board.forEach(square => {
         square.addEventListener('click', function playMove(){
             let section = square.getAttribute('data-num');
-            const outcome = gameOver();
-
             if (win === false){
                 if (moveCount % 2 === 0){
                     gameBoard.game.splice(section, 1, playerOne.getMarker());
-                    if (outcome.winner().checkWin() === true){
+                    if (gameOver().winner.checkWin() === true){
                         console.log(`${playerOne.playerName()} is victorious`);
                     }
                     
                 }
                 else if (moveCount % 2 !== 0){
                     gameBoard.game.splice(section, 1, playerTwo.getMarker());
-                    if (outcome.winner().checkWin() === true){
+                    if (gameOver().winner.checkWin() === true){
                         console.log(`${playerTwo.playerName()} is victorious`);
                     }
                 }
                 moveCount++
-                
                 board[section].textContent = gameBoard.game[section];
-                
-                
-                outcome.draw();
-                
+                gameOver().draw();
 
-                
-                
-                
             }
             this.removeEventListener('click', playMove, false);
         }, false);
@@ -182,14 +176,3 @@ const computer = () => {
     }    
 */
 
-
-/* 
-marker = playedSquares[2]; 
-                if (marker === playerOne.getMarker()){
-                    console.log(`${playerOne.playerName()} is victorious`);
-                }
-                else if (marker === playerTwo.getMarker()){
-                    console.log(`${playerTwo.playerName()} is victorious`);
-                }
-                win = true;
-*/
