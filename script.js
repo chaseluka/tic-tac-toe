@@ -1,16 +1,13 @@
-const gameBoard = (() => {
-    let game = [10, 2, 3, 4, 5, 6, 7, 8, 9];
-    
-    return {
-        game
-    }
-})();
-
 let win = false;
 let moveCount = 0;
 
 const ticTacToe = (() => {
     const board = document.querySelectorAll('.square');
+
+    const gameBoard = (() => {
+        let game = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+        return {game}
+    })();
 
     const Player = (name, marker) => {
         const playerName = () => {return name;}
@@ -83,6 +80,25 @@ const ticTacToe = (() => {
         return {winner, draw, win}
     }
 
+    const computer = () => {
+        if (win === false){
+            let remainingSquares = gameBoard.game.filter(square => {
+                if (square !== 'X' && square !== 'O'){return square}
+            });
+            let num = Math.floor(Math.random() * remainingSquares.length);
+            let numFound = remainingSquares[num] - 1;
+            
+            gameBoard.game.splice(numFound, 1, createPlayers().playerTwo.getMarker());
+            board[numFound].textContent = gameBoard.game[numFound];
+
+            if (gameOver().winner.checkWin === true){
+                console.log(`${createPlayers().playerTwo.playerName()} is victorious`);
+            }
+            moveCount++;
+        }
+        
+    }    
+
     const playMove = (e) => {
         let section = e.target;
         section = section.getAttribute('data-num');
@@ -91,7 +107,9 @@ const ticTacToe = (() => {
                 gameBoard.game.splice(section, 1, createPlayers().playerOne.getMarker());
                 if (gameOver().winner.checkWin === true){
                     console.log(`${createPlayers().playerOne.playerName()} is victorious`);
+                    
                 }
+                moveCount++
             }
             else if (moveCount % 2 !== 0){
                 gameBoard.game.splice(section, 1, createPlayers().playerTwo.getMarker());
@@ -99,8 +117,11 @@ const ticTacToe = (() => {
                     console.log(`${createPlayers().playerTwo.playerName()} is victorious`);
                 }
             }
-            moveCount++
+            
             board[section].textContent = gameBoard.game[section];
+            
+            computer();
+            
         }
         e.target.removeEventListener('click', playMove, false);
     }
@@ -110,7 +131,7 @@ const ticTacToe = (() => {
             square.addEventListener('click', playMove, false);
         });
     }
-    return{playRound, createPlayers}
+    return{playRound, createPlayers, gameBoard}
 })();
 
 const playGame = document.getElementById('play-game');
@@ -126,29 +147,12 @@ reset.addEventListener('click', () => {
     clearSquare.forEach(square => {
         square.textContent = '';
     });
-    gameBoard.game = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    ticTacToe.gameBoard.game = [1, 2, 3, 4, 5, 6, 7, 8, 9];
     win = false;
     ticTacToe.playRound();
     moveCount = 0;
 })
 
 
-/*
-const computer = () => {
-        const check = gameOver();
 
-        let remainingSquares = Math.floor(Math.random() * check.draw().gameBoard.game.length);
-        
-        gameBoard.game.splice(remainingSquares, 1, playerTwo.getMarker());
-    
-        board[remainingSquares].textContent = gameBoard.game[remainingSquares];
-        console.log(gameBoard.game);
-        console.log(board[remainingSquares].textContent);
-
-        check.draw();
-        check.winner();
-        moveCount++;
-    
-    }    
-*/
 
