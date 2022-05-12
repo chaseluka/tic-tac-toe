@@ -5,7 +5,7 @@ const ticTacToe = (() => {
     const board = document.querySelectorAll('.square');
 
     const gameBoard = (() => {
-        let game = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+        let game = [1, 'X', 'O', 'O', 'O', 6, 'X', 'X', 9];
         return {game}
     })();
 
@@ -24,68 +24,90 @@ const ticTacToe = (() => {
         playerTwoDisplay.textContent = `${playerTwo.playerName()} is ${playerTwo.getMarker()}`;
         return {playerOne, playerTwo}
     }
+
+    const filterSquares = (currentBoard) => {
+        let filterSquares = currentBoard.filter(square => {
+            if (square !== 'X' && square !== 'O'){return square}
+        });
+        let remainingSquares = [];
+        
+        for (const number in filterSquares){
+            let indx = filterSquares[number] - 1;
+            remainingSquares.push(`${indx}`);
+        }
+        return remainingSquares;
+    }
     
     const gameOver = () => {
         
-        const winner = (() => {
-            
-            const rowWin = (() =>{
-                row1 = [gameBoard.game[0], gameBoard.game[1], gameBoard.game[2]];
-                row2 = [gameBoard.game[3], gameBoard.game[4], gameBoard.game[5]];
-                row3 = [gameBoard.game[6], gameBoard.game[7], gameBoard.game[8]];
-                if (row1.every(marker => marker =='X') || row1.every(marker => marker == 'O') ||
-                    row2.every(marker => marker =='X') || row2.every(marker => marker == 'O') ||
-                    row3.every(marker => marker =='X') || row3.every(marker => marker == 'O')){
-                        return true;
-                    }
-                else return false
-            })();
-            
-            const columnWin = (() => {
-                column1 = [gameBoard.game[0], gameBoard.game[3], gameBoard.game[6]];
-                column2 = [gameBoard.game[1], gameBoard.game[4], gameBoard.game[7]];
-                column3 = [gameBoard.game[2], gameBoard.game[5], gameBoard.game[8]];
-                if (column1.every(marker => marker =='X') || column1.every(marker => marker == 'O') ||
-                    column2.every(marker => marker =='X') || column2.every(marker => marker == 'O') ||
-                    column3.every(marker => marker =='X') || column3.every(marker => marker == 'O')){
-                        return true;
-                    }
-                else return false
-            })();
-
-            const diagonalWin = (() => {
-                diagonal1 = [gameBoard.game[0], gameBoard.game[4], gameBoard.game[8]];
-                diagonal2 = [gameBoard.game[2], gameBoard.game[4], gameBoard.game[6]];
-                if (diagonal1.every(marker => marker =='X') || diagonal1.every(marker => marker == 'O') ||
-                    diagonal2.every(marker => marker =='X') || diagonal2.every(marker => marker == 'O')){
-                        return true;
-                    }
-                else return false
-            })();
-            const checkWin = (() => {
-                if (rowWin === true || columnWin === true || diagonalWin === true){
-                    win = true;
-                    return true
-                }
-                else return 
-            })();
-            return{checkWin};
-        })();
+        const winner = (marker) => {
+            if (
+                (gameBoard.game[0] === marker && gameBoard.game[1] === marker && gameBoard.game[2] === marker) ||
+                (gameBoard.game[3] === marker && gameBoard.game[4] === marker && gameBoard.game[5] === marker) ||
+                (gameBoard.game[6] === marker && gameBoard.game[7] === marker && gameBoard.game[8] === marker) ||
+                (gameBoard.game[0] === marker && gameBoard.game[3] === marker && gameBoard.game[6] === marker) ||
+                (gameBoard.game[1] === marker && gameBoard.game[4] === marker && gameBoard.game[7] === marker) ||
+                (gameBoard.game[2] === marker && gameBoard.game[5] === marker && gameBoard.game[8] === marker) ||
+                (gameBoard.game[0] === marker && gameBoard.game[4] === marker && gameBoard.game[8] === marker) ||
+                (gameBoard.game[2] === marker && gameBoard.game[4] === marker && gameBoard.game[6] === marker)
+            ){
+                win = true;
+                return true;
+            }
+            else return false
+        };
         
         const draw = (() => {
             if (gameBoard.game.every(square => (square == 'O' || square == 'X')) && win === false){
                 console.log('Its a draw');
+                return true
             }
         })();
         return {winner, draw, win}
     }
 
+    function minimax (board, computerMove, marker) {
+        let array = board;
+        if (gameOver().winner(`${createPlayers().playerOne.getMarker()}`)){ 
+            let evaluation = -1;
+            return evaluation;
+        }
+        else if (gameOver().winner(`${createPlayers().playerTwo.getMarker()}`)){
+            let evaluation = 1;
+            return evaluation;
+        }
+        else if (gameOver().draw){
+            let evaluation = 0;
+            return evaluation;
+        }
+        let remainingSquares = filterSquares(array);
+        for (let i = 0; i < remainingSquares.length; i++){
+            array[remainingSquares[i]] = marker;
+            if (computerMove){
+                let maxEvaluation = -Infinity;
+                let evaluation = minimax(array, false, `${createPlayers().playerOne.getMarker()}`);
+                maxEvaluation = Math.max(maxEvaluation, evaluation);
+                return maxEvaluation;
+            }
+            else {
+                let minEvaluation = -Infinity;
+                let evaluation = minimax(array, true, `${createPlayers().playerTwo.getMarker()}`);
+                minEvaluation = Math.min(minEvaluation, evaluation);
+                return minEvaluation;
+            }
+        }
+    }
+
+
     const computer = () => {
         if (win === false){
-            let remainingSquares = gameBoard.game.filter(square => {
-                if (square !== 'X' && square !== 'O'){return square}
-            });
-            let num = Math.floor(Math.random() * remainingSquares.length);
+            console.log(gameBoard.game);
+            const cpuPlay = minimax(gameBoard.game, true, `${createPlayers().playerTwo.getMarker()}`);
+            console.log(gameBoard.game);
+            console.log(cpuPlay);
+
+            
+            /*let num = Math.floor(Math.random() * remainingSquares.length);
             let numFound = remainingSquares[num] - 1;
             
             gameBoard.game.splice(numFound, 1, createPlayers().playerTwo.getMarker());
@@ -95,6 +117,9 @@ const ticTacToe = (() => {
                 console.log(`${createPlayers().playerTwo.playerName()} is victorious`);
             }
             moveCount++;
+            
+            const move = minimax(gameBoard.game, `${createPlayers().playerTwo.getMarker()}`, true);
+        */
         }
         
     }    
@@ -105,7 +130,7 @@ const ticTacToe = (() => {
         if (win === false){
             if (moveCount % 2 === 0){
                 gameBoard.game.splice(section, 1, createPlayers().playerOne.getMarker());
-                if (gameOver().winner.checkWin === true){
+                if (gameOver().winner(`${createPlayers().playerOne.getMarker()}`) === true){
                     console.log(`${createPlayers().playerOne.playerName()} is victorious`);
                     
                 }
@@ -113,7 +138,7 @@ const ticTacToe = (() => {
             }
             else if (moveCount % 2 !== 0){
                 gameBoard.game.splice(section, 1, createPlayers().playerTwo.getMarker());
-                if (gameOver().winner.checkWin === true){
+                if (gameOver().winner(`${createPlayers().playerTwo.getMarker()}`) === true){
                     console.log(`${createPlayers().playerTwo.playerName()} is victorious`);
                 }
             }
@@ -156,3 +181,9 @@ reset.addEventListener('click', () => {
 
 
 
+
+/*
+let child = position[i];
+                let evaluation = minimax(child, depth - 1, false);
+                maxEvaluation = Math.max(maxEvaluation, evaluation);
+                */
