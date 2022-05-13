@@ -5,7 +5,7 @@ const ticTacToe = (() => {
     const board = document.querySelectorAll('.square');
 
     const gameBoard = (() => {
-        let game = [1, 'X', 'O', 'O', 'O', 6, 'X', 'X', 9];
+        let game = [0, 1, 2, 3, 4, 5, 6, 7, 8];  //[0, 1, 2, 3, 4, 5, 6, 7, 8] ['X', 'X', 'O', 3, 4, 5, 'O', 7, 8]
         return {game}
     })();
 
@@ -29,13 +29,7 @@ const ticTacToe = (() => {
         let filterSquares = currentBoard.filter(square => {
             if (square !== 'X' && square !== 'O'){return square}
         });
-        let remainingSquares = [];
-        
-        for (const number in filterSquares){
-            let indx = filterSquares[number] - 1;
-            remainingSquares.push(`${indx}`);
-        }
-        return remainingSquares;
+        return filterSquares;
     }
     
     const gameOver = () => {
@@ -51,23 +45,21 @@ const ticTacToe = (() => {
                 (gameBoard.game[0] === marker && gameBoard.game[4] === marker && gameBoard.game[8] === marker) ||
                 (gameBoard.game[2] === marker && gameBoard.game[4] === marker && gameBoard.game[6] === marker)
             ){
-                win = true;
                 return true;
             }
             else return false
         };
         
-        const draw = (() => {
-            if (gameBoard.game.every(square => (square == 'O' || square == 'X')) && win === false){
-                console.log('Its a draw');
+        const draw = (board) => {
+            if (board.every(square => (square == 'O' || square == 'X'))){
+                
                 return true
             }
-        })();
+        };
         return {winner, draw, win}
     }
 
-    function minimax (board, computerMove, marker) {
-        let array = board;
+    function minimax (board, computerMove, marker, scores) {
         if (gameOver().winner(`${createPlayers().playerOne.getMarker()}`)){ 
             let evaluation = -1;
             return evaluation;
@@ -76,35 +68,67 @@ const ticTacToe = (() => {
             let evaluation = 1;
             return evaluation;
         }
-        else if (gameOver().draw){
+        else if (gameOver().draw(board)){
             let evaluation = 0;
             return evaluation;
         }
-        let remainingSquares = filterSquares(array);
+        let maxEvaluation = -Infinity;
+        let minEvaluation = +Infinity;
+        let remainingSquares = filterSquares(board);
         for (let i = 0; i < remainingSquares.length; i++){
-            array[remainingSquares[i]] = marker;
-            if (computerMove){
-                let maxEvaluation = -Infinity;
-                let evaluation = minimax(array, false, `${createPlayers().playerOne.getMarker()}`);
+            board[remainingSquares[i]] = marker;
+            if (computerMove === true){
+                let evaluation = minimax(board, false, `${createPlayers().playerOne.getMarker()}`, false);
                 maxEvaluation = Math.max(maxEvaluation, evaluation);
-                return maxEvaluation;
+                scores[remainingSquares[i]] = evaluation
             }
             else {
-                let minEvaluation = -Infinity;
-                let evaluation = minimax(array, true, `${createPlayers().playerTwo.getMarker()}`);
+                let evaluation = minimax(board, true, `${createPlayers().playerTwo.getMarker()}`, false);
                 minEvaluation = Math.min(minEvaluation, evaluation);
-                return minEvaluation;
             }
+            board[remainingSquares[i]] = remainingSquares[i];
+            
         }
+        if (computerMove && scores){return scores}
+        else if (computerMove && scores === false){
+            return maxEvaluation
+        }
+        else return minEvaluation
     }
 
 
     const computer = () => {
         if (win === false){
             console.log(gameBoard.game);
-            const cpuPlay = minimax(gameBoard.game, true, `${createPlayers().playerTwo.getMarker()}`);
+            const scores = {
+                0: this.score,
+                1: this.score,
+                2: this.score,
+                3: this.score,
+                4: this.score,
+                5: this.score,
+                6: this.score,
+                7: this.score,
+                8: this.score
+            }
+            const cpuPlay = minimax(gameBoard.game, true, `${createPlayers().playerTwo.getMarker()}`, scores);
             console.log(gameBoard.game);
-            console.log(cpuPlay);
+            console.log(scores);
+            let bestScore = -Infinity;
+            let updateBoard = null;
+            for (const score in scores){
+                console.log(scores[score]);
+                if (scores[score] >= bestScore && scores[score] !== Infinity){
+                    bestScore = scores[score];
+                    updateBoard = score;
+                }
+            }
+            if (updateBoard !== null){
+                gameBoard.game.splice(updateBoard, 1, createPlayers().playerTwo.getMarker());
+                board[updateBoard].textContent = gameBoard.game[updateBoard];
+            }
+            
+
 
             
             /*let num = Math.floor(Math.random() * remainingSquares.length);
@@ -128,24 +152,26 @@ const ticTacToe = (() => {
         let section = e.target;
         section = section.getAttribute('data-num');
         if (win === false){
-            if (moveCount % 2 === 0){
-                gameBoard.game.splice(section, 1, createPlayers().playerOne.getMarker());
+            
+            gameBoard.game.splice(section, 1, createPlayers().playerOne.getMarker());
                 if (gameOver().winner(`${createPlayers().playerOne.getMarker()}`) === true){
                     console.log(`${createPlayers().playerOne.playerName()} is victorious`);
-                    
+                    win = true;
                 }
                 moveCount++
-            }
-            else if (moveCount % 2 !== 0){
+            /*else if (moveCount % 2 !== 0){
                 gameBoard.game.splice(section, 1, createPlayers().playerTwo.getMarker());
                 if (gameOver().winner(`${createPlayers().playerTwo.getMarker()}`) === true){
                     console.log(`${createPlayers().playerTwo.playerName()} is victorious`);
                 }
             }
+            */
             
             board[section].textContent = gameBoard.game[section];
+            if (win === false){
+                computer();
+            }
             
-            computer();
             
         }
         e.target.removeEventListener('click', playMove, false);
