@@ -103,6 +103,7 @@ const ticTacToe = (() => {
 
 
     const computer = () => {
+        
         if (win === false){
             const scores = {
                 0: this.score,
@@ -164,23 +165,41 @@ const ticTacToe = (() => {
                 if (num <= 0.50){bestMove();}
                 else {randomMove();}
             }
-
+            
             const hard = () => {
                 console.log('hard');
                 if (num <= 0.75){bestMove();}
                 else {randomMove();}
             }
+            
+
+            const difficulty = () => {
+                const easyGame = document.getElementById('easy').checked;
+                const mediumGame = document.getElementById('medium').checked;
+                const hardGame = document.getElementById('hard').checked;
+                if (easyGame === true){
+                    easy(); 
+                }
+                else if (mediumGame === true){
+                    medium();
+                }
+                else if (hardGame === true){
+                    hard();
+                }
+                else bestMove();
+            }
+
             moveCount++;
-            return {easy, medium, hard}
+            return {difficulty}
         }
         
     }    
 
+    
     const playMove = (e) => {
         let section = e.target;
         section = section.getAttribute('data-num');
         if (win === false){
-            
             gameBoard.game.splice(section, 1, createPlayers().playerOne.getMarker());
                 if (gameOver().winner(`${createPlayers().playerOne.getMarker()}`) === true){
                     console.log(`${createPlayers().playerOne.playerName()} is victorious`);
@@ -194,13 +213,13 @@ const ticTacToe = (() => {
                 }
             }
             */
-            
+           console.log(easy);
+           console.log(medium);
+           console.log(hard);
             board[section].textContent = gameBoard.game[section];
             if (win === false){
-                computer().medium();
+                computer().difficulty();
             }
-            
-            
         }
         e.target.removeEventListener('click', playMove, false);
     }
@@ -231,13 +250,3 @@ reset.addEventListener('click', () => {
     ticTacToe.playRound();
     moveCount = 0;
 })
-
-
-
-
-
-/*
-let child = position[i];
-                let evaluation = minimax(child, depth - 1, false);
-                maxEvaluation = Math.max(maxEvaluation, evaluation);
-                */

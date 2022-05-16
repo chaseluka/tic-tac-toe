@@ -19,12 +19,27 @@
         <div class="square" data-num="7"></div>
         <div class="square" data-num="8"></div>
     </div>
-    <label id="player-names">
-        <input type="text" id="player-one">
-        <input type="text" id="player-two">
-        <button id="play-game">Enter names</button>
-        <button id="reset">Reset</button>
-    </label>
+        <label id="difficulty">
+            <div>
+                <input type="radio" id="easy" name="difficulty" value="true">
+                <label for="easy">Easy</label>
+            </div>
+            <div>
+                <input type="radio" id="medium" name="difficulty" value="true" checked>
+                <label for="medium">Medium</label>
+            </div>
+            <div>
+                <input type="radio" id="hard" name="difficulty" value="true">
+                <label for="hard">Hard</label>
+            </div>
+            <div>
+                <input type="radio" id="impossible" name="difficulty" value="true">
+                <label for="impossible">Impossible</label>
+            </div>
+            <button type="submit" id="play-game">Enter names</button>
+
+        </label>
+     <button id="reset">Reset</button>
     <div class="players">
         <div class="player-display"></div>
         <div class="player-display"></div>
