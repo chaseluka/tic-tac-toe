@@ -5,7 +5,7 @@ const ticTacToe = (() => {
     const board = document.querySelectorAll('.square');
 
     const gameBoard = (() => {
-        let game = ['0', 1, 2, 3, 4, 5, 6, 7, 8];  
+        let game = [];  
         return {game}
     })();
 
@@ -16,13 +16,17 @@ const ticTacToe = (() => {
     }
     
     const createPlayers = () => {
-        const playerOne = Player('Player', 'X');
-        const playerTwo = Player('Computer', 'O');
-        const playerOneDisplay = document.querySelector('.players div:first-child');
-        const playerTwoDisplay = document.querySelector('.players div:last-child');
-        playerOneDisplay.textContent = `${playerOne.playerName()} is ${playerOne.getMarker()}`;
-        playerTwoDisplay.textContent = `${playerTwo.playerName()} is ${playerTwo.getMarker()}`;
-        return {playerOne, playerTwo}
+        const markerO = document.getElementById('o').checked;
+        if (markerO === true){
+            const playerOne = Player('Player', 'O');
+            const playerTwo = Player('Computer', 'X');
+            return {playerOne, playerTwo, markerO};
+        }
+        else {
+            const playerOne = Player('Player', 'X');
+            const playerTwo = Player('Computer', 'O');
+            return {playerOne, playerTwo, markerO};
+        }
     }
 
     const filterSquares = (currentBoard) => {
@@ -122,7 +126,7 @@ const ticTacToe = (() => {
 
             const playMove = () => {
                 if (updateBoard !== null){
-                    gameBoard.game.splice(updateBoard, 1, createPlayers().playerTwo.getMarker());
+                    gameBoard.game.splice(updateBoard, 1, `${createPlayers().playerTwo.getMarker()}`);
                     board[updateBoard].textContent = gameBoard.game[updateBoard];
                 }
                 if (gameOver().winner(`${createPlayers().playerTwo.getMarker()}`) === true){
@@ -139,7 +143,7 @@ const ticTacToe = (() => {
                         updateBoard = score;
                     }
                 }
-                playMove();
+                playMove(`${createPlayers().playerTwo.getMarker()}`);
             }
 
             const randomMove = () => {
@@ -155,35 +159,31 @@ const ticTacToe = (() => {
             }
 
             const easy = () => {
-                console.log('easy');
                 if (num <= 0.25){bestMove();}
                 else {randomMove();}
             }
             
             const medium = () => {
-                console.log('medium');
                 if (num <= 0.50){bestMove();}
                 else {randomMove();}
             }
             
             const hard = () => {
-                console.log('hard');
                 if (num <= 0.75){bestMove();}
                 else {randomMove();}
             }
             
-
             const difficulty = () => {
-                const easyGame = document.getElementById('easy').checked;
-                const mediumGame = document.getElementById('medium').checked;
-                const hardGame = document.getElementById('hard').checked;
-                if (easyGame === true){
+                const easyBot = document.getElementById('easy').checked;
+                const mediumBot = document.getElementById('medium').checked;
+                const hardBot = document.getElementById('hard').checked;
+                if (easyBot === true){
                     easy(); 
                 }
-                else if (mediumGame === true){
+                else if (mediumBot === true){
                     medium();
                 }
-                else if (hardGame === true){
+                else if (hardBot === true){
                     hard();
                 }
                 else bestMove();
@@ -192,34 +192,34 @@ const ticTacToe = (() => {
             moveCount++;
             return {difficulty}
         }
-        
-    }    
 
+    }    
     
     const playMove = (e) => {
         let section = e.target;
         section = section.getAttribute('data-num');
+        const againstFriend = document.getElementById('friend').checked;
         if (win === false){
-            gameBoard.game.splice(section, 1, createPlayers().playerOne.getMarker());
-                if (gameOver().winner(`${createPlayers().playerOne.getMarker()}`) === true){
-                    console.log(`${createPlayers().playerOne.playerName()} is victorious`);
-                    win = true;
+                if (moveCount % 2 === 0){
+                    gameBoard.game.splice(section, 1, createPlayers().playerOne.getMarker());
+                    if (gameOver().winner(`${createPlayers().playerOne.getMarker()}`) === true){
+                        console.log(`${createPlayers().playerOne.playerName()} is victorious`);
+                        win = true;
+                    }
                 }
-                moveCount++
-            /*else if (moveCount % 2 !== 0){
-                gameBoard.game.splice(section, 1, createPlayers().playerTwo.getMarker());
-                if (gameOver().winner(`${createPlayers().playerTwo.getMarker()}`) === true){
-                    console.log(`${createPlayers().playerTwo.playerName()} is victorious`);
+                else if (moveCount % 2 !== 0){
+                    gameBoard.game.splice(section, 1, createPlayers().playerTwo.getMarker());
+                    if (gameOver().winner(`${createPlayers().playerTwo.getMarker()}`) === true){
+                        console.log(`${createPlayers().playerTwo.playerName()} is victorious`);
+                        win = true;
+                    }
                 }
-            }
-            */
-           console.log(easy);
-           console.log(medium);
-           console.log(hard);
-            board[section].textContent = gameBoard.game[section];
-            if (win === false){
+            
+            if (win === false && againstFriend !== true){
                 computer().difficulty();
             }
+            moveCount++
+            board[section].textContent = gameBoard.game[section];
         }
         e.target.removeEventListener('click', playMove, false);
     }
@@ -229,7 +229,7 @@ const ticTacToe = (() => {
             square.addEventListener('click', playMove, false);
         });
     }
-    return{playRound, createPlayers, gameBoard}
+    return{playRound, createPlayers, gameBoard, computer}
 })();
 
 const playGame = document.getElementById('play-game');
@@ -237,6 +237,10 @@ playGame.addEventListener('click', () => {
     ticTacToe.playRound();
     ticTacToe.createPlayers();
     moveCount = 0;
+    if (ticTacToe.createPlayers().markerO === true){
+        ticTacToe.computer().difficulty();
+        moveCount++;
+    }
 })
 
 const reset = document.getElementById('reset');
@@ -245,8 +249,20 @@ reset.addEventListener('click', () => {
     clearSquare.forEach(square => {
         square.textContent = '';
     });
+})
+
+const startGame = () => {
     ticTacToe.gameBoard.game = ['0', 1, 2, 3, 4, 5, 6, 7, 8];
     win = false;
     ticTacToe.playRound();
+    ticTacToe.createPlayers();
     moveCount = 0;
-})
+    if (ticTacToe.createPlayers().markerO === true){
+        ticTacToe.computer().difficulty();
+        moveCount++;
+    }
+}
+
+const resetGame = () => {
+
+}
