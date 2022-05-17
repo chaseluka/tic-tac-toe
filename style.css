@@ -1,14 +1,27 @@
+:root {
+    --nude: #f7d1c6;
+    --strawberry: #c83f49;
+    --green-apple: #a8e4a0;
+    --oceanic: #4daf9f;
+    --dark-gray: #3d3d3d;
+}
+
+
+body {
+    background-color: var(--oceanic) ;
+}
+
 .board {
     display: grid;
     width: 400px;
     height: 400px;
     gap: 10px;
-    background-color: black;
+    background: var(--dark-gray);
     grid-template: repeat(3, 1fr) / repeat(3, 1fr);
 }
 
-.square{
-    background-color: white;
+.square {
+    background-color: var(--oceanic);
     font-size: 80px;
     display: flex;
     justify-content: center;
