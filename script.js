@@ -196,10 +196,10 @@ const ticTacToe = (() => {
     }    
     
     const playMove = (e) => {
+        const againstFriend = document.getElementById('friend').checked;
         let section = e.target;
         section = section.getAttribute('data-num');
-        const againstFriend = document.getElementById('friend').checked;
-        if (win === false){
+        if (win === false && gameBoard.game[section] !== 'X' && gameBoard.game[section] !== 'O'){
                 if (moveCount % 2 === 0){
                     gameBoard.game.splice(section, 1, createPlayers().playerOne.getMarker());
                     if (gameOver().winner(`${createPlayers().playerOne.getMarker()}`) === true){
@@ -229,40 +229,40 @@ const ticTacToe = (() => {
             square.addEventListener('click', playMove, false);
         });
     }
+
+    const startGame = () => {
+        ticTacToe.gameBoard.game = ['0', 1, 2, 3, 4, 5, 6, 7, 8];
+        win = false;
+        ticTacToe.playRound();
+        ticTacToe.createPlayers();
+        moveCount = 0;
+        if (ticTacToe.createPlayers().markerO === true){
+            ticTacToe.computer().difficulty();
+            moveCount++;
+        }
+        
+    }
+
+    const resetGame = () => {
+        let clearSquare = document.querySelectorAll('.square');
+            clearSquare.forEach(square => {
+                square.textContent = '';
+            });
+    }
+
+    const playGame = document.getElementById('play-game');
+    playGame.addEventListener('click', () => {
+        startGame();
+    })
+
+    const reset = document.getElementById('reset');
+    reset.addEventListener('click', () => {
+        startGame();
+        resetGame();
+    })
+
     return{playRound, createPlayers, gameBoard, computer}
 })();
 
-const playGame = document.getElementById('play-game');
-playGame.addEventListener('click', () => {
-    ticTacToe.playRound();
-    ticTacToe.createPlayers();
-    moveCount = 0;
-    if (ticTacToe.createPlayers().markerO === true){
-        ticTacToe.computer().difficulty();
-        moveCount++;
-    }
-})
 
-const reset = document.getElementById('reset');
-reset.addEventListener('click', () => {
-    let clearSquare = document.querySelectorAll('.square');
-    clearSquare.forEach(square => {
-        square.textContent = '';
-    });
-})
 
-const startGame = () => {
-    ticTacToe.gameBoard.game = ['0', 1, 2, 3, 4, 5, 6, 7, 8];
-    win = false;
-    ticTacToe.playRound();
-    ticTacToe.createPlayers();
-    moveCount = 0;
-    if (ticTacToe.createPlayers().markerO === true){
-        ticTacToe.computer().difficulty();
-        moveCount++;
-    }
-}
-
-const resetGame = () => {
-
-}
