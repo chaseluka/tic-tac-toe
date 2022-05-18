@@ -5,6 +5,7 @@ const ticTacToe = (() => {
     let moveCount = 0;
     let choice = 'medium';
     let markerO = false;
+    let againstFriend = false;
 
     const gameBoard = (() => {
         let game = [];  
@@ -127,13 +128,11 @@ const ticTacToe = (() => {
             const playMove = () => {
                 if (updateBoard !== null && updateBoard !== 'undefined'){
                     gameBoard.game.splice(updateBoard, 1, `${createPlayers().playerTwo.getMarker()}`);
-                    console.log(updateBoard);
                     board[updateBoard].textContent = gameBoard.game[updateBoard];
                     if (createPlayers().playerTwo.getMarker() === 'O'){board[updateBoard].style.color = '#eee'}
                     else {board[updateBoard].style.color = '#3d3d3d'}
                 }
                 if (gameOver().winner(`${createPlayers().playerTwo.getMarker()}`) === true){
-                    console.log(`${createPlayers().playerTwo.playerName()} is victorious`);
                     win = true;
                 }
             }
@@ -177,7 +176,6 @@ const ticTacToe = (() => {
             }
             
             const difficulty = () => {
-                console.log(choice);
                 if (choice === 'easy'){
                     easy(); 
                 }
@@ -197,7 +195,6 @@ const ticTacToe = (() => {
     }    
     
     const playMove = (e) => {
-        const againstFriend = document.getElementById('friend').checked;
         let section = e.target;
         section = section.getAttribute('data-num');
         if (win === false && gameBoard.game[section] !== 'X' && gameBoard.game[section] !== 'O'){
@@ -205,7 +202,6 @@ const ticTacToe = (() => {
                     gameBoard.game.splice(section, 1, createPlayers().playerOne.getMarker());
                     board[section].textContent = gameBoard.game[section];       
                     if (gameOver().winner(`${createPlayers().playerOne.getMarker()}`) === true){
-                        console.log(`${createPlayers().playerOne.playerName()} is victorious`);
                         win = true;
                     }
                 }
@@ -213,7 +209,6 @@ const ticTacToe = (() => {
                     gameBoard.game.splice(section, 1, createPlayers().playerTwo.getMarker());
                     board[section].textContent = gameBoard.game[section];
                     if (gameOver().winner(`${createPlayers().playerTwo.getMarker()}`) === true){
-                        console.log(`${createPlayers().playerTwo.playerName()} is victorious`);
                         win = true;
                     }
                 }
@@ -221,6 +216,7 @@ const ticTacToe = (() => {
             else {board[section].style.color = '#3d3d3d'}
             
             if (win === false && againstFriend !== true){
+                console.log('hi');
                 computer().difficulty();
             }
             moveCount++
@@ -260,7 +256,7 @@ const ticTacToe = (() => {
         playRound();
         createPlayers();
         moveCount = 0;
-        if (createPlayers().markerO === true){
+        if (createPlayers().markerO === true && againstFriend !== true){
             computer().difficulty();
             moveCount++;
         }
@@ -275,11 +271,6 @@ const ticTacToe = (() => {
     }
 
     startGame();
-
-    const playGame = document.getElementById('play-game');
-    playGame.addEventListener('click', () => {
-        startGame();
-    })
 
     const reset = document.getElementById('reset');
     reset.addEventListener('click', () => {
@@ -314,6 +305,21 @@ const ticTacToe = (() => {
            choice = button.getAttribute('id'); 
            startGame();
         })
+    });
+
+    const opponentBtn = document.getElementById('opponent');
+    opponentBtn.addEventListener('click', () => {
+        if (againstFriend === false){
+            againstFriend = true;
+            opponentBtn.textContent = 'Play Computer';
+            opponentBtn.style.cssText = 'background-color: #c83f49;';
+        }
+        else {
+            againstFriend = false;
+            opponentBtn.textContent = 'Two Player'
+            opponentBtn.style.cssText = 'background-color: #3d3d3d;'
+        }
+        startGame();
     })
 })();
 
