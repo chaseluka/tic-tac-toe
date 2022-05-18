@@ -10,8 +10,13 @@
 <body>
     
     <div class="header">TIC TAC TOE</div>
-
-
+    <div class="marker-select">
+        <div class="marker" id="x">X</div>
+        <svg style="width:40px;height:40px" viewBox="0 0 24 24" class="marker animation">
+            <path fill="currentColor" d="M21,9L17,5V8H10V10H17V13M7,11L3,15L7,19V16H14V14H7V11Z" />
+        </svg>
+        <div class="marker" id="o">O</div>
+    </div>
     <div class="board">
         <div class="square" data-num="0"></div>
         <div class="square" data-num="1"></div>
@@ -22,13 +27,6 @@
         <div class="square" data-num="6"></div>
         <div class="square" data-num="7"></div>
         <div class="square" data-num="8"></div>
-    </div>
-    <div class="marker-select">
-        <div class="marker" id="x">X</div>
-        <svg style="width:40px;height:40px" viewBox="0 0 24 24" class="marker animation">
-            <path fill="currentColor" d="M21,9L17,5V8H10V10H17V13M7,11L3,15L7,19V16H14V14H7V11Z" />
-        </svg>
-        <div class="marker" id="o">O</div>
     </div>
     <div class="difficulty">
         <div class="difficulty-choice" id="easy">Easy</div>
