@@ -1,8 +1,10 @@
-let win = false;
-let moveCount = 0;
 
 const ticTacToe = (() => {
     const board = document.querySelectorAll('.square');
+    let win = false;
+    let moveCount = 0;
+    let choice = 'medium';
+    let markerO = false;
 
     const gameBoard = (() => {
         let game = [];  
@@ -17,6 +19,7 @@ const ticTacToe = (() => {
     
     const createPlayers = () => {
         const markerO = document.getElementById('o').checked;
+        
         if (markerO === true){
             const playerOne = Player('Player', 'O');
             const playerTwo = Player('Computer', 'X');
@@ -105,7 +108,6 @@ const ticTacToe = (() => {
         else return minEvaluation
     }
 
-
     const computer = () => {
         
         if (win === false){
@@ -125,9 +127,12 @@ const ticTacToe = (() => {
             let num = Math.random();
 
             const playMove = () => {
-                if (updateBoard !== null){
+                if (updateBoard !== null && updateBoard !== 'undefined'){
                     gameBoard.game.splice(updateBoard, 1, `${createPlayers().playerTwo.getMarker()}`);
+                    console.log(updateBoard);
                     board[updateBoard].textContent = gameBoard.game[updateBoard];
+                    if (createPlayers().playerTwo.getMarker() === 'O'){board[updateBoard].style.color = '#eee'}
+                    else {board[updateBoard].style.color = '#3d3d3d'}
                 }
                 if (gameOver().winner(`${createPlayers().playerTwo.getMarker()}`) === true){
                     console.log(`${createPlayers().playerTwo.playerName()} is victorious`);
@@ -174,16 +179,14 @@ const ticTacToe = (() => {
             }
             
             const difficulty = () => {
-                const easyBot = document.getElementById('easy').checked;
-                const mediumBot = document.getElementById('medium').checked;
-                const hardBot = document.getElementById('hard').checked;
-                if (easyBot === true){
+                console.log(choice);
+                if (choice === 'easy'){
                     easy(); 
                 }
-                else if (mediumBot === true){
+                else if (choice === 'medium'){
                     medium();
                 }
-                else if (hardBot === true){
+                else if (choice === 'hard'){
                     hard();
                 }
                 else bestMove();
@@ -202,6 +205,7 @@ const ticTacToe = (() => {
         if (win === false && gameBoard.game[section] !== 'X' && gameBoard.game[section] !== 'O'){
                 if (moveCount % 2 === 0){
                     gameBoard.game.splice(section, 1, createPlayers().playerOne.getMarker());
+                    board[section].textContent = gameBoard.game[section];       
                     if (gameOver().winner(`${createPlayers().playerOne.getMarker()}`) === true){
                         console.log(`${createPlayers().playerOne.playerName()} is victorious`);
                         win = true;
@@ -209,17 +213,20 @@ const ticTacToe = (() => {
                 }
                 else if (moveCount % 2 !== 0){
                     gameBoard.game.splice(section, 1, createPlayers().playerTwo.getMarker());
+                    board[section].textContent = gameBoard.game[section];
                     if (gameOver().winner(`${createPlayers().playerTwo.getMarker()}`) === true){
                         console.log(`${createPlayers().playerTwo.playerName()} is victorious`);
                         win = true;
                     }
                 }
+            if (gameBoard.game[section] === 'O'){board[section].style.color = '#eee'}
+            else {board[section].style.color = '#3d3d3d'}
             
             if (win === false && againstFriend !== true){
                 computer().difficulty();
             }
             moveCount++
-            board[section].textContent = gameBoard.game[section];
+            
         }
         e.target.removeEventListener('click', playMove, false);
     }
@@ -230,14 +237,38 @@ const ticTacToe = (() => {
         });
     }
 
+    const difficultyDisplay = () => {
+        const easyDiv = document.getElementById('easy');
+        const mediumDiv = document.getElementById('medium');
+        const hardDiv = document.getElementById('hard');
+        const impossibleDiv = document.getElementById('impossible');
+
+        easyDiv.setAttribute('style', 'background-color: none; color: #3d3d3d;');
+        mediumDiv.setAttribute('style', 'background-color: none; color: #3d3d3d;');
+        hardDiv.setAttribute('style', 'background-color: none; color: #3d3d3d;');
+        impossibleDiv.setAttribute('style', 'background-color: none; color: #3d3d3d;');
+
+        if (choice === 'easy'){easyDiv.setAttribute('style', 'background-color: #c83f49; color: #eee;')}
+        else if (choice === 'medium'){mediumDiv.setAttribute('style', 'background-color: #c83f49; color: #eee;')}
+        else if (choice === 'hard'){hardDiv.setAttribute('style', 'background-color: #c83f49; color: #eee;')}
+        else {impossibleDiv.setAttribute('style', 'background-color: #c83f49; color: #eee;')}
+    }
+
+    const selectedMarker = () => {
+        const oMarker = document.getElementById('o');
+        const xMarker = document.getElementById('x');
+    }
+
     const startGame = () => {
-        ticTacToe.gameBoard.game = ['0', 1, 2, 3, 4, 5, 6, 7, 8];
+        resetGame();
+        difficultyDisplay();
+        gameBoard.game = ['0', 1, 2, 3, 4, 5, 6, 7, 8];
         win = false;
-        ticTacToe.playRound();
-        ticTacToe.createPlayers();
+        playRound();
+        createPlayers();
         moveCount = 0;
-        if (ticTacToe.createPlayers().markerO === true){
-            ticTacToe.computer().difficulty();
+        if (createPlayers().markerO === true){
+            computer().difficulty();
             moveCount++;
         }
         
@@ -250,6 +281,8 @@ const ticTacToe = (() => {
             });
     }
 
+    startGame();
+
     const playGame = document.getElementById('play-game');
     playGame.addEventListener('click', () => {
         startGame();
@@ -258,11 +291,14 @@ const ticTacToe = (() => {
     const reset = document.getElementById('reset');
     reset.addEventListener('click', () => {
         startGame();
-        resetGame();
+    });
+
+    const difficultyButton = document.querySelectorAll('.difficulty-choice');
+    difficultyButton.forEach(button => {
+        button.addEventListener('click', () => {
+           choice = button.getAttribute('id'); 
+           startGame();
+        })
     })
-
-    return{playRound, createPlayers, gameBoard, computer}
 })();
-
-
 
