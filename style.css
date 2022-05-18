@@ -89,23 +89,34 @@ body {
     align-items: center;
 }
 
-.marker-select > img {
+.marker-select > svg {
     color: var(--dark-gray);
 }
 
-.marker {
+#x, #o{
     font-size: 1.6rem;
     font-weight: bold;
     border-radius: 100%;
     padding: 8px 12px;
 }
 
-.marker-select div:last-child {
+#o {
     background-color: var(--white);
     color: var(--dark-gray);
 }
 
-.marker-select div:first-child {
+#x {
     background-color: var(--dark-gray);
     color: var(--white);
 }
+
+.animation{
+    transition: 0.3s;
+    transform: rotate(180deg);
+}
+
+.animation-2 {
+    transition: 0.3s;
+    transform: rotate(360deg);
+}
+

@@ -18,8 +18,6 @@ const ticTacToe = (() => {
     }
     
     const createPlayers = () => {
-        const markerO = document.getElementById('o').checked;
-        
         if (markerO === true){
             const playerOne = Player('Player', 'O');
             const playerTwo = Player('Computer', 'X');
@@ -254,11 +252,6 @@ const ticTacToe = (() => {
         else {impossibleDiv.setAttribute('style', 'background-color: #c83f49; color: #eee;')}
     }
 
-    const selectedMarker = () => {
-        const oMarker = document.getElementById('o');
-        const xMarker = document.getElementById('x');
-    }
-
     const startGame = () => {
         resetGame();
         difficultyDisplay();
@@ -292,6 +285,28 @@ const ticTacToe = (() => {
     reset.addEventListener('click', () => {
         startGame();
     });
+
+    const markerBtn = document.querySelectorAll('.marker');
+    markerBtn.forEach(button => {
+        button.addEventListener('click', () => {
+            let parent = document.querySelector('.marker-select');
+            let animation = document.querySelector('svg');
+            animation.classList.toggle('animation');
+            animation.classList.toggle('animation-2');
+
+            if (markerO === false){
+                parent.prepend(document.getElementById('o'));
+                parent.appendChild(document.getElementById('x'));
+                markerO = true
+            }
+            else {
+                parent.prepend(document.getElementById('x'));
+                parent.appendChild(document.getElementById('o'));
+                markerO = false;
+            }
+            startGame();
+        })
+    })
 
     const difficultyButton = document.querySelectorAll('.difficulty-choice');
     difficultyButton.forEach(button => {
