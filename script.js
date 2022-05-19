@@ -1,6 +1,7 @@
 
 const ticTacToe = (() => {
-    const board = document.querySelectorAll('.square');
+//variables for game organization
+    const board = document.querySelectorAll('.square'); //attaches display for any played move
     let win = false;
     let moveCount = 0;
     let choice = 'medium';
@@ -8,30 +9,29 @@ const ticTacToe = (() => {
     let againstFriend = false;
 
     const gameBoard = (() => {
-        let game = [];  
+        let game = [];  //allows the playing of the game
         return {game}
     })();
 
-    const Player = (name, marker) => {
-        const playerName = () => {return name;}
+    const Player = (marker) => {
         const getMarker = () => {return marker}
-        return {playerName, getMarker}
+        return {getMarker}
     }
     
     const createPlayers = () => {
         if (markerO === true){
-            const playerOne = Player('Player', 'O');
-            const playerTwo = Player('Computer', 'X');
+            const playerOne = Player('O');
+            const playerTwo = Player('X');
             return {playerOne, playerTwo, markerO};
         }
         else {
-            const playerOne = Player('Player', 'X');
-            const playerTwo = Player('Computer', 'O');
-            return {playerOne, playerTwo, markerO};
+            const playerOne = Player('X');
+            const playerTwo = Player('O');
+            return {playerOne, playerTwo};
         }
     }
 
-    const filterSquares = (currentBoard) => {
+    const filterSquares = (currentBoard) => { //used to determine non played squares
         let filterSquares = currentBoard.filter(square => {
             if (square !== 'X' && square !== 'O'){
                 return square
@@ -93,6 +93,8 @@ const ticTacToe = (() => {
     }
 
     function minimax (board, computerMove, marker, scores, alpha, beta) {
+        /*Intelligent AI bot, returns evaluation of position in favor/ not in favor of computer and recursively calls
+        function until an evaluation of position is reached*/
         if (gameOver().winner(`${createPlayers().playerOne.getMarker()}`)){ 
             let evaluation = -1;
             return evaluation;
@@ -114,10 +116,10 @@ const ticTacToe = (() => {
                 let evaluation = minimax(board, false, `${createPlayers().playerOne.getMarker()}`, false, alpha, beta);
                 maxEvaluation = Math.max(maxEvaluation, evaluation);
                 alpha = Math.max(alpha, evaluation);
-                if (beta <= alpha){break}; 
-                scores[remainingSquares[i]] = evaluation
+                if (beta <= alpha){break}; //prunes uncessesary moves, if position cannot achieve a better result.
+                scores[remainingSquares[i]] = evaluation //adds the best evaluation for a given move to object scores
             }
-            else {
+            else { //follows opposite pattern from cpu to evaluate the best possible position for the opponent.
                 let evaluation = minimax(board, true, `${createPlayers().playerTwo.getMarker()}`, false, alpha, beta);
                 minEvaluation = Math.min(minEvaluation, evaluation);
                 alpha = Math.min(alpha, evaluation);
@@ -126,16 +128,17 @@ const ticTacToe = (() => {
             board[remainingSquares[i]] = remainingSquares[i];
             
         }
-        if (computerMove && scores){return scores}
-        else if (computerMove && scores === false){
+        if (computerMove && scores){return scores} //allows for returning the final positions only when all possible moves have been evaluated
+        else if (computerMove && scores === false){ //if possible moves have not finished evaluating allow for returning until evaluation is reached
             return maxEvaluation
         }
         else return minEvaluation
     }
-
+    
+    //Takes in total information for a computer move and determines what to play and updates it to the game and board.
     const computer = () => {
         
-        if (win === false){
+        if (win === false){ //stores final evaluations for minimax positional moves
             const scores = {
                 0: this.score,
                 1: this.score,
@@ -166,7 +169,7 @@ const ticTacToe = (() => {
                 displayGameOver();
             }
             
-            const bestMove = () => {
+            const bestMove = () => { //chooses the last of the best possible outcomes in favor of the cpu
                 let bestScore = -Infinity;
                 for (const score in scores){
                     if (scores[score] >= bestScore && scores[score] !== Infinity){
@@ -188,7 +191,7 @@ const ticTacToe = (() => {
                 updateBoard = options[randomNum];
                 playMove();
             }
-
+            //bot difficulties for user to select.
             const easy = () => {
                 if (num <= 0.25){bestMove();}
                 else {randomMove();}
@@ -222,7 +225,7 @@ const ticTacToe = (() => {
         }
 
     }    
-    
+    //plays a given move for either play and/or opponent (if cpu is selected to play against)
     const playMove = (e) => {
         let section = e.target;
         section = section.getAttribute('data-num');
@@ -248,14 +251,14 @@ const ticTacToe = (() => {
             displayGameOver();
             moveCount++
             if (win === false && againstFriend !== true && moveCount % 2 !== 0){
-                setTimeout (() => {
-                    computer().difficulty();
+                setTimeout (() => { //delays move for 1.5s
+                    computer().difficulty(); //plays CPU move.
                 }, 1500)
             }
         }
     }
 
-    const playRound = () => {
+    const playRound = () => { //if a square on board is clicked, playMove
         board.forEach(square => {
             square.addEventListener('click', playMove, false);
         });
@@ -278,7 +281,7 @@ const ticTacToe = (() => {
         else {impossibleDiv.setAttribute('style', 'background-color: #c83f49; color: #eee;')}
     }
 
-    const startGame = () => {
+    const startGame = () => { //sets up all neccessary logic to play a the game for any given condition
         resetGame();
         difficultyDisplay();
         gameBoard.game = ['0', 1, 2, 3, 4, 5, 6, 7, 8];
@@ -302,9 +305,9 @@ const ticTacToe = (() => {
             });
     }
 
-    startGame();
+    startGame(); //calls the game to start once upon page load
 
-    const reset = document.querySelectorAll('.reset');
+    const reset = document.querySelectorAll('.reset'); //clears game board
     reset.forEach(button => {
         button.addEventListener('click', () => {
             startGame();
@@ -312,7 +315,7 @@ const ticTacToe = (() => {
         });
     });
 
-    const markerBtn = document.querySelectorAll('.marker');
+    const markerBtn = document.querySelectorAll('.marker'); //allows user to change marker for playing cpu
     markerBtn.forEach(button => {
         button.addEventListener('click', () => {
             let parent = document.querySelector('.marker-select');
