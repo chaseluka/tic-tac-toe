@@ -66,6 +66,32 @@ const ticTacToe = (() => {
         return {winner, draw, win}
     }
 
+    const displayGameOver = () => {
+        if (gameOver().winner('X') === true){
+            const declare = document.querySelector('.overlay-declare');
+            declare.textContent = 'Won';
+            const marker = document.querySelector('.overlay-marker');
+            marker.textContent = 'X';
+            marker.style.color = '#3d3d3d';
+            document.getElementById('overlay').style.display = 'block';
+        }
+        else if (gameOver().winner('O') === true){
+            const declare = document.querySelector('.overlay-declare');
+            declare.textContent = 'Won';
+            const marker = document.querySelector('.overlay-marker');
+            marker.textContent = 'O';
+            marker.style.color = '#eee';
+            document.getElementById('overlay').style.display = 'block';
+        }
+        else if (gameOver().draw(gameBoard.game) === true){
+            const declare = document.querySelector('.overlay-declare');
+            declare.textContent = 'Draw';
+            const marker = document.querySelector('.overlay-marker');
+            marker.textContent = '';
+            document.getElementById('overlay').style.display = 'block';
+        }
+    }
+
     function minimax (board, computerMove, marker, scores, alpha, beta) {
         if (gameOver().winner(`${createPlayers().playerOne.getMarker()}`)){ 
             let evaluation = -1;
@@ -129,12 +155,15 @@ const ticTacToe = (() => {
                 if (updateBoard !== null && updateBoard !== 'undefined'){
                     gameBoard.game.splice(updateBoard, 1, `${createPlayers().playerTwo.getMarker()}`);
                     board[updateBoard].textContent = gameBoard.game[updateBoard];
-                    if (createPlayers().playerTwo.getMarker() === 'O'){board[updateBoard].style.color = '#eee'}
+                    if (createPlayers().playerTwo.getMarker() === 'O'){
+                        board[updateBoard].style.cssText = 'color: #eee'
+                    }
                     else {board[updateBoard].style.color = '#3d3d3d'}
                 }
                 if (gameOver().winner(`${createPlayers().playerTwo.getMarker()}`) === true){
                     win = true;
                 }
+                displayGameOver();
             }
             
             const bestMove = () => {
@@ -204,25 +233,26 @@ const ticTacToe = (() => {
                     if (gameOver().winner(`${createPlayers().playerOne.getMarker()}`) === true){
                         win = true;
                     }
+                    e.target.removeEventListener('click', playMove, false);
                 }
-                else if (moveCount % 2 !== 0){
+                else if (moveCount % 2 !== 0 && againstFriend === true){
                     gameBoard.game.splice(section, 1, createPlayers().playerTwo.getMarker());
                     board[section].textContent = gameBoard.game[section];
                     if (gameOver().winner(`${createPlayers().playerTwo.getMarker()}`) === true){
                         win = true;
                     }
+                    e.target.removeEventListener('click', playMove, false);
                 }
             if (gameBoard.game[section] === 'O'){board[section].style.color = '#eee'}
             else {board[section].style.color = '#3d3d3d'}
-            
-            if (win === false && againstFriend !== true){
-                console.log('hi');
-                computer().difficulty();
-            }
+            displayGameOver();
             moveCount++
-            
+            if (win === false && againstFriend !== true && moveCount % 2 !== 0){
+                setTimeout (() => {
+                    computer().difficulty();
+                }, 1500)
+            }
         }
-        e.target.removeEventListener('click', playMove, false);
     }
 
     const playRound = () => {
@@ -257,7 +287,9 @@ const ticTacToe = (() => {
         createPlayers();
         moveCount = 0;
         if (createPlayers().markerO === true && againstFriend !== true){
-            computer().difficulty();
+            setTimeout (() => {
+                computer().difficulty();
+            }, 1500)
             moveCount++;
         }
         
@@ -272,9 +304,12 @@ const ticTacToe = (() => {
 
     startGame();
 
-    const reset = document.getElementById('reset');
-    reset.addEventListener('click', () => {
-        startGame();
+    const reset = document.querySelectorAll('.reset');
+    reset.forEach(button => {
+        button.addEventListener('click', () => {
+            startGame();
+            document.getElementById('overlay').style.display = 'none';
+        });
     });
 
     const markerBtn = document.querySelectorAll('.marker');
