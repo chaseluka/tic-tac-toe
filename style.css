@@ -1,7 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap');
 
 :root {
     --strawberry: #c83f49;
-    --oceanic: #4daf9f;
+    --oceanic: #61C1B1;
     --dark-gray: #3d3d3d;
     --white: #eee;
 }
@@ -14,6 +15,7 @@ body {
     align-items: center;
     gap: max(20px, 5vh);
     width: 95vw;
+    font-family: 'Roboto', sans-serif;
 }
 
 .header {
@@ -105,7 +107,7 @@ body {
     font-size: 1.6rem;
     font-weight: bold;
     border-radius: 100%;
-    padding: 8px 12px;
+    padding: 6px 12px;
 }
 
 #o {
